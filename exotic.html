@@ -1,0 +1,1400 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXOTIC_RICH | Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111;
+        }
+        .dripping-font {
+            font-family: 'Creepster', cursive;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .glassmorphism {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .accent-yellow-bg { background-color: #facc15; }
+        .accent-yellow-bg-hover:hover { background-color: #fde047; }
+        .accent-yellow-text { color: #facc15; }
+        .custom-select, .custom-input {
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .hot-banner {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(45deg, #8b5cf6, #ec4899);
+            color: white;
+            padding: 4px 20px;
+            font-weight: bold;
+            font-size: 12px;
+            transform: rotate(25deg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .big-sale-banner {
+             position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(45deg, #ef4444, #f97316);
+            color: white;
+            padding: 4px 20px;
+            font-weight: bold;
+            font-size: 12px;
+            transform: rotate(25deg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        /* For chat bubbles */
+        #chat-log {
+            display: flex;
+            flex-direction: column;
+        }
+        #live-sale-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <canvas id="money-animation" class="fixed top-0 left-0 w-full h-full" style="z-index: -1;"></canvas>
+
+    <!-- Storefront Page -->
+    <div id="storefront-page">
+        <header class="p-4 flex justify-between items-center glassmorphism sticky top-0 z-20">
+            <div class="flex items-end space-x-4">
+                <h1 class="dripping-font text-3xl sm:text-4xl">EXOTIC_RICH</h1>
+                <div class="hidden md:flex items-center space-x-2 pb-1">
+                     <span class="text-white/70 text-xs font-light">THE STORE WHERE YOU DOUBLE YOUR MONEY.</span>
+                     <span class="text-white/30">|</span>
+                     <span class="text-white/70 text-xs font-light italic">"Unlock wealth the world doesn't see."</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Auth buttons -->
+                <div id="auth-container" class="flex items-center space-x-2 text-sm">
+                    <button id="login-btn" class="hover:text-yellow-400 transition-colors">Login</button>
+                    <span class="text-white/30">/</span>
+                    <button id="signup-btn" class="hover:text-yellow-400 transition-colors">Sign Up</button>
+                </div>
+                <!-- User display -->
+                <div id="user-container" class="hidden items-center space-x-3 text-sm">
+                    <span id="user-email" class="font-semibold text-yellow-300 hidden sm:inline"></span>
+                    <button id="admin-panel-btn" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-md text-xs">Admin</button>
+                    <button id="logout-btn" class="hover:text-red-500 transition-colors"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+
+                 <div class="hidden md:flex items-center space-x-2 text-green-400 font-bold">
+                    <i class="fas fa-check-circle"></i>
+                    <span>500+ Sales</span>
+                </div>
+                <a href="https://t.me/ExoticMon3y" target="_blank" rel="noopener noreferrer" class="text-white hover:text-yellow-400 transition-colors flex items-center space-x-2">
+                    <i class="fab fa-telegram-plane text-2xl"></i>
+                    <span class="hidden sm:inline">Channel</span>
+                </a>
+                <button id="support-button" class="text-white hover:text-yellow-400 transition-colors flex items-center space-x-2">
+                    <i class="fas fa-headset text-2xl"></i>
+                    <span class="hidden sm:inline">Support</span>
+                </button>
+                <button id="cart-button" class="relative">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="container mx-auto p-4 sm:p-6">
+            <!-- Categories -->
+            <section class="mb-8">
+                <div class="grid grid-cols-4 sm:grid-cols-4 gap-4 text-center">
+                    <button class="glassmorphism p-4 rounded-lg hover:bg-yellow-400/20 transition-all">
+                        <i class="fas fa-plane text-2xl mb-2 accent-yellow-text"></i>
+                        <span class="text-xs">Flights</span>
+                    </button>
+                    <button class="glassmorphism p-4 rounded-lg hover:bg-yellow-400/20 transition-all">
+                        <i class="fas fa-gift text-2xl mb-2 accent-yellow-text"></i>
+                        <span class="text-xs">Giftcards</span>
+                    </button>
+                    <button class="glassmorphism p-4 rounded-lg hover:bg-yellow-400/20 transition-all">
+                        <i class="fas fa-shopping-bag text-2xl mb-2 accent-yellow-text"></i>
+                        <span class="text-xs">Shopping</span>
+                    </button>
+                    <button class="glassmorphism p-4 rounded-lg hover:bg-yellow-400/20 transition-all">
+                        <i class="fas fa-utensils text-2xl mb-2 accent-yellow-text"></i>
+                        <span class="text-xs">Food</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Hot Products -->
+            <section>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Hot Products</h2>
+                    <a href="#" class="text-sm accent-yellow-text hover:underline">View all &gt;</a>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- IHG Product Card -->
+                    <div data-product="ihg" class="glassmorphism rounded-lg overflow-hidden cursor-pointer group">
+                        <div class="p-4 bg-orange-600 relative flex items-center justify-center h-32">
+                             <div class="hot-banner">HOT</div>
+                            <h3 class="text-4xl font-extrabold text-white">IHG</h3>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold">IHG Accounts</h4>
+                            <p class="text-sm text-gray-400">from <span class="accent-yellow-text font-bold">$50.00</span></p>
+                        </div>
+                    </div>
+                     <!-- AMEX Product Card -->
+                    <div data-product="amex" class="glassmorphism rounded-lg overflow-hidden cursor-pointer group">
+                        <div class="p-4 bg-blue-800 relative flex items-center justify-center h-32">
+                             <div class="hot-banner">HOT</div>
+                            <h3 class="text-4xl font-extrabold text-white">AMEX</h3>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold">AMEX [SHIPPED CCS]</h4>
+                            <p class="text-sm text-gray-400">from <span class="accent-yellow-text font-bold">$3000.00</span></p>
+                        </div>
+                    </div>
+                    <!-- Spotify Product Card -->
+                    <div data-product="spotify" class="glassmorphism rounded-lg overflow-hidden cursor-pointer group">
+                        <div class="p-4 bg-green-500 relative flex items-center justify-center h-32">
+                             <div class="hot-banner">HOT</div>
+                            <h3 class="text-4xl font-extrabold text-white">SPOTIFY</h3>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold">Spotify Premium</h4>
+                            <p class="text-sm text-gray-400">from <span class="accent-yellow-text font-bold">$12.00</span></p>
+                        </div>
+                    </div>
+                    <!-- Reselling Product Card -->
+                    <div data-product="reselling" class="glassmorphism rounded-lg overflow-hidden cursor-pointer group">
+                        <div class="p-4 bg-purple-600 relative flex items-center justify-center h-32">
+                             <div class="hot-banner">HOT</div>
+                            <h3 class="text-4xl font-extrabold text-white">RESELLING</h3>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold">Reselling Products</h4>
+                            <p class="text-sm text-gray-400">from <span class="accent-yellow-text font-bold">$30.00</span></p>
+                        </div>
+                    </div>
+                    <!-- Secret Sauce Product Card -->
+                    <div data-product="secretsauce" class="glassmorphism rounded-lg overflow-hidden cursor-pointer group">
+                        <div class="relative flex items-center justify-center h-32 bg-black">
+                           <div class="big-sale-banner">BIG SALE</div>
+                           <img src="https://th.bing.com/th/id/R.654e9b5b3805f6f73c2db59da892eb13?rik=HKmcW968UW5Xag&riu=http%3a%2f%2fstatic1.squarespace.com%2fstatic%2f6144d106ee0f834ae92b4f60%2f6144d8efe7cee731497de5f9%2f660e6c0af8cfb70ea9a50d79%2f1712221449696%2fWell%252C%2bfortunately%2brap%2bartist%2bPunchmade%2bDev%2bis%2bkeeping%2bthe%2biced-out%2bculture%2bgoing%2bstrong.%2b%2b.jpg%3fformat%3d1500w&ehk=EbRCY6ficjTRVG99GCMjC%2f3x8YYaQY62JFeghwW0kBY%3d&risl=&pid=ImgRaw&r=0" alt="SECRET SAUCE Logo" class="h-full w-full object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold">SECRET SAUCE</h4>
+                            <p class="text-sm text-gray-400">Access Required</p>
+                        </div>
+                    </div>
+                    <!-- SS Password Product Card -->
+                    <div data-product="sspassword" class="glassmorphism rounded-lg overflow-hidden cursor-pointer group">
+                        <div class="relative flex items-center justify-center h-32 bg-black">
+                            <div class="big-sale-banner">BIG SALE</div>
+                           <img src="https://tse3.mm.bing.net/th/id/OIP.o1O-br7yAbnin5Yq87_SwwHaJQ?rs=1&pid=ImgDetMain&o=7&rm=3" alt="SS PASSWORD Logo" class="h-full w-full object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold">SS PASSWORD</h4>
+                            <p class="text-sm text-gray-400">from <span class="accent-yellow-text font-bold">$20000.00</span></p>
+                        </div>
+                    </div>
+                    <!-- EXOTICZ Product Card -->
+                    <div data-product="exoticz" class="glassmorphism rounded-lg overflow-hidden cursor-pointer group">
+                        <div class="relative flex items-center justify-center h-32 bg-black">
+                           <img src="https://tse4.mm.bing.net/th/id/OIP.o9slZ1l6PRoZI9hRxXJoMQHaE7?rs=1&pid=ImgDetMain&o=7&rm=3" alt="EXOTICZ Logo" class="h-full w-full object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold">EXOTICZ</h4>
+                            <p class="text-sm text-gray-400">DM for Password</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reviews Section -->
+            <section class="mt-12">
+                <h2 class="text-2xl font-bold text-center mb-6">What Our Clients Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Review Card 1 -->
+                    <div class="glassmorphism p-6 rounded-lg">
+                        <div class="flex items-center mb-2 text-yellow-400">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 mb-4 italic">"Legit the only plug you'll ever need. Fast service, products are on point. Don't sleep on this."</p>
+                        <p class="font-bold text-right">- Sh**wSt**per9</p>
+                    </div>
+                    <!-- Review Card 2 -->
+                    <div class="glassmorphism p-6 rounded-lg">
+                        <div class="flex items-center mb-2 text-yellow-400">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 mb-4 italic">"Was skeptical at first but EXOTIC_RICH is the real deal. The 'Secret Sauce' is a game changer. Made my money back 10x."</p>
+                        <p class="font-bold text-right">- Gr**dM**terFlex</p>
+                    </div>
+                    <!-- Review Card 3 -->
+                    <div class="glassmorphism p-6 rounded-lg">
+                        <div class="flex items-center mb-2 text-yellow-400">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 mb-4 italic">"Don't even hesitate. Every drop is fire. The AMEX came through exactly as described. A1 service."</p>
+                        <p class="font-bold text-right">- M**eyB**gYo</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Admin Panel Page -->
+    <div id="admin-page" class="hidden">
+         <header class="p-4 flex justify-between items-center glassmorphism sticky top-0 z-20">
+            <h1 class="text-2xl font-bold text-red-500"><i class="fas fa-user-shield mr-2"></i>Admin Panel</h1>
+            <button id="back-to-store-from-admin-btn" class="text-white hover:text-yellow-400 transition-colors">Back to Store</button>
+        </header>
+        <main class="container mx-auto p-4 sm:p-6">
+            <h2 class="text-xl font-bold mb-4">Support Chats</h2>
+            <div id="support-chat-list" class="glassmorphism p-4 rounded-lg max-h-96 overflow-y-auto">
+                <!-- Support chats will be listed here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Generic Product Page -->
+    <div id="product-page" class="hidden">
+        <div class="min-h-screen flex flex-col items-center justify-center p-4">
+            <button id="back-to-store-btn" class="absolute top-4 left-4 text-white hover:text-gray-300 transition-all z-10">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Store
+            </button>
+            <div class="w-full max-w-md glassmorphism p-6 sm:p-8 rounded-2xl shadow-2xl shadow-white/10">
+                <div class="text-center mb-6">
+                    <div id="product-page-header" class="rounded-lg py-2 mb-4 inline-block">
+                         <h2 id="product-page-title" class="text-4xl font-extrabold text-white px-4"></h2>
+                    </div>
+                    <p id="price-tag" class="text-3xl font-bold accent-yellow-text">$0.00 each</p>
+                    <span id="warranty-tag" class="text-sm bg-gray-500/20 text-gray-200 px-3 py-1 rounded-full border border-gray-400/50">24h Warranty</span>
+                </div>
+                 <div id="product-description" class="mb-6 text-sm text-gray-300 space-y-2">
+                     <!-- Populated by JS -->
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label for="variant" class="block text-sm font-medium text-gray-300 mb-2">Select variant</label>
+                        <select id="variant" name="variant" class="custom-select w-full focus:ring-2 focus:ring-yellow-500 focus:outline-none"></select>
+                    </div>
+                    <div>
+                        <label for="quantity" class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" class="custom-input w-full focus:ring-2 focus:ring-white focus:outline-none text-center">
+                    </div>
+                </div>
+                <p id="product-disclaimer" class="text-xs text-gray-300/60 italic text-center mb-4">Disclaimer: Gift card values are estimates. The final amount may be slightly less.</p>
+                <div class="flex items-center justify-center space-x-2 mb-6">
+                    <input type="checkbox" id="terms-checkbox" class="h-4 w-4 rounded bg-gray-700 border-gray-400 text-white focus:ring-white">
+                    <label for="terms-checkbox" class="text-sm text-gray-300">
+                        I have read and agree to the <a href="#" id="terms-link" class="underline text-yellow-400 hover:text-yellow-300">Terms of Service</a>.
+                    </label>
+                </div>
+                <button id="add-to-cart-btn" class="w-full accent-yellow-bg text-black font-bold py-3 px-6 rounded-lg text-lg accent-yellow-bg-hover transition-all duration-300 shadow-lg shadow-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="fas fa-shopping-cart mr-2"></i>
+                    <span>Add to Cart ($0.00)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Page -->
+    <div id="terms-page" class="hidden">
+        <div class="min-h-screen flex flex-col items-center justify-center p-4">
+             <button id="back-from-terms-btn" class="absolute top-4 left-4 text-white hover:text-gray-300 transition-all z-10">
+                <i class="fas fa-arrow-left mr-2"></i>Back
+            </button>
+            <div class="w-full max-w-3xl glassmorphism p-6 sm:p-8 rounded-2xl shadow-2xl shadow-white/10">
+                 <h1 class="text-3xl font-bold text-center mb-6 accent-yellow-text">Terms of Service</h1>
+                 <div class="space-y-6 text-gray-300 text-sm">
+                    <div>
+                        <h2 class="font-bold text-lg text-white mb-2">1. The Nature of Our Products & Services</h2>
+                        <p>Welcome to EXOTIC_RICH. The products and services offered here are unique and operate in a high-risk, high-reward environment. We provide access to exclusive items, accounts, and methods that are not available through conventional means. By using our store, you acknowledge that you understand the unconventional nature of these goods and are proceeding at your own discretion.</p>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-lg text-white mb-2">2. Your Responsibility: Knowledge is Power</h2>
+                        <p>It is crucial that you, the customer, understand what you are purchasing. Many of our products require specific knowledge to be used effectively and safely. We provide the tools, but the successful application of these tools rests with you. We strongly advise against purchasing items if you are unfamiliar with their use. By agreeing to these terms, you confirm that you are making an informed decision and accept the inherent risks.</p>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-lg text-white mb-2">3. Our Guarantee: The 24-Hour Safety Net</h2>
+                        <p>We stand by the quality of our initial delivery. We guarantee that all products and accounts are valid and functional at the time of purchase. Should you encounter any issues with an item within the first <strong class="accent-yellow-text">24 hours</strong> of purchase, you must contact support with your valid Order ID. If the issue is verified to be on our end, we will provide one of the following at our discretion:</p>
+                        <ul class="list-disc list-inside pl-4 mt-2">
+                            <li>A one-time <strong class="accent-yellow-text">replacement</strong> of the faulty product.</li>
+                            <li><strong class="accent-yellow-text">Store credit</strong> equal to the value of your purchase.</li>
+                        </ul>
+                        <p class="mt-2">This guarantee is void if the issue arises from user error, misuse, or failure to follow proper procedures. The 24-hour window is strict.</p>
+                    </div>
+                     <div>
+                        <h2 class="font-bold text-lg text-white mb-2">4. Refund & Replacement Policy</h2>
+                        <p>Due to the nature of our digital and exclusive products, <strong class="text-red-500">we do not offer cash refunds under any circumstances</strong>. All sales are final. The only recourse for a faulty product is our 24-hour replacement or store credit policy, as outlined above. Once a product is delivered and the 24-hour window has passed, we hold no further responsibility for it.</p>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-lg text-white mb-2">5. Why These Terms Are Important</h2>
+                        <p>These terms exist for transparency and to protect both you and our operation. The world of exotic goods is not like a regular retail store. It requires a different mindset—one of diligence, personal responsibility, and a clear understanding of the risks and rewards. By making a purchase, you are not just a customer; you are a participant in a unique marketplace. These rules ensure that the marketplace remains fair, secure, and viable for everyone involved.</p>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Modal -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black/70 z-30 flex items-center justify-center">
+        <div class="glassmorphism w-full max-w-lg m-4 rounded-lg shadow-lg">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h2 class="text-xl font-bold">Your Cart</h2>
+                <button id="close-cart-btn"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div id="cart-items" class="p-4 max-h-96 overflow-y-auto">
+                <!-- Cart items will be populated here -->
+            </div>
+            <div id="cart-footer" class="p-4 border-t border-gray-700">
+                 <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="password-modal" class="hidden fixed inset-0 bg-black/70 z-30 flex items-center justify-center p-4">
+        <div class="glassmorphism w-full max-w-sm m-4 rounded-lg shadow-lg text-center p-6 relative">
+            <button id="close-password-btn" class="absolute top-4 right-4"><i class="fas fa-times text-xl"></i></button>
+            <i class="fas fa-lock text-4xl text-yellow-400 mb-4"></i>
+            <h2 class="text-xl font-bold mb-2">Secret Area</h2>
+            <p class="text-gray-300 mb-4">Enter the password to view this product.</p>
+            <input type="password" id="password-input" class="custom-input w-full text-center mb-4" placeholder="••••••••••••">
+            <p id="password-error" class="text-red-500 text-sm mb-4 hidden">Incorrect Password. Please try again.</p>
+            <button id="password-submit-btn" class="w-full accent-yellow-bg text-black font-bold py-3 rounded-lg accent-yellow-bg-hover">Unlock</button>
+        </div>
+    </div>
+
+    <!-- Order ID Verification Modal -->
+    <div id="order-id-modal" class="hidden fixed inset-0 bg-black/70 z-30 flex items-center justify-center p-4">
+        <div class="glassmorphism w-full max-w-sm m-4 rounded-lg shadow-lg text-center p-6 relative">
+            <button id="close-order-id-btn" class="absolute top-4 right-4"><i class="fas fa-times text-xl"></i></button>
+            <i class="fas fa-ticket-alt text-4xl text-yellow-400 mb-4"></i>
+            <h2 class="text-xl font-bold mb-2">Support Verification</h2>
+            <p class="text-gray-300 mb-4">Please enter your Order ID to continue.</p>
+            <input type="text" id="order-id-input" class="custom-input w-full text-center mb-4" placeholder="EXOTIC-...">
+            <p id="order-id-error" class="text-red-500 text-sm mb-4 hidden">Invalid Order ID. Please check and try again.</p>
+            <button id="order-id-submit-btn" class="w-full accent-yellow-bg text-black font-bold py-3 rounded-lg accent-yellow-bg-hover">Verify & Continue</button>
+        </div>
+    </div>
+
+    <!-- Live Support Modal -->
+    <div id="support-modal" class="hidden fixed inset-0 bg-black/70 z-30 flex items-center justify-center p-4">
+        <div class="glassmorphism w-full max-w-md m-4 rounded-lg shadow-lg flex flex-col" style="height: 70vh;">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h2 class="text-xl font-bold">Live Support</h2>
+                <button id="close-support-btn"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div id="chat-log" class="p-4 flex-grow overflow-y-auto space-y-4">
+                <!-- Chat messages will be populated here -->
+            </div>
+            <div class="p-4 border-t border-gray-700">
+                <form id="chat-form" class="flex space-x-2">
+                    <input type="text" id="chat-input" class="custom-input w-full" placeholder="Type your message..." autocomplete="off">
+                    <button type="submit" class="accent-yellow-bg text-black font-bold py-2 px-4 rounded-lg accent-yellow-bg-hover">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Sale Notification -->
+    <div id="live-sale-notification" class="fixed bottom-4 left-4 glassmorphism p-4 rounded-lg shadow-lg z-40 transition-all duration-500 transform translate-y-20 opacity-0">
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-shopping-cart text-yellow-400 text-2xl"></i>
+            <div>
+                <p class="font-bold text-sm">Someone in <span id="sale-location" class="text-yellow-300"></span></p>
+                <p class="text-xs text-gray-200">purchased <span id="sale-product" class="font-semibold text-white"></span></p>
+                <p class="text-xs text-gray-400 mt-1"><span id="sale-time"></span> ago</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="glassmorphism w-full max-w-sm m-4 rounded-lg shadow-lg text-center p-6 relative">
+            <button id="close-login-btn" class="absolute top-4 right-4"><i class="fas fa-times text-xl"></i></button>
+            <i class="fas fa-user-lock text-4xl text-yellow-400 mb-4"></i>
+            <h2 class="text-xl font-bold mb-4">Login to your Account</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" class="custom-input w-full text-center mb-4" placeholder="Email Address" required>
+                <input type="password" id="login-password" class="custom-input w-full text-center mb-4" placeholder="Password" required>
+                <div class="flex items-center justify-center space-x-2 mb-4">
+                    <input type="checkbox" id="remember-me" class="h-4 w-4 rounded bg-gray-700 border-gray-400 text-yellow-400 focus:ring-yellow-500">
+                    <label for="remember-me" class="text-sm text-gray-300">Remember me</label>
+                </div>
+                 <p id="login-error" class="text-red-500 text-sm mb-4 hidden"></p>
+                <button type="submit" class="w-full accent-yellow-bg text-black font-bold py-3 rounded-lg accent-yellow-bg-hover">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signup-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="glassmorphism w-full max-w-sm m-4 rounded-lg shadow-lg text-center p-6 relative">
+            <button id="close-signup-btn" class="absolute top-4 right-4"><i class="fas fa-times text-xl"></i></button>
+            <i class="fas fa-user-plus text-4xl text-yellow-400 mb-4"></i>
+            <h2 class="text-xl font-bold mb-4">Create an Account</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" class="custom-input w-full text-center mb-4" placeholder="Email Address" required>
+                <input type="password" id="signup-password" class="custom-input w-full text-center mb-4" placeholder="Create Password" required>
+                <p id="signup-error" class="text-red-500 text-sm mb-4 hidden"></p>
+                <button type="submit" class="w-full accent-yellow-bg text-black font-bold py-3 rounded-lg accent-yellow-bg-hover">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged,
+            setPersistence,
+            browserLocalPersistence,
+            browserSessionPersistence
+        } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            onSnapshot, 
+            addDoc, 
+            serverTimestamp, 
+            query, 
+            orderBy, 
+            getDocs 
+        } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        // IMPORTANT: Replace with your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "...",
+            projectId: "...",
+            storageBucket: "...",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Auth UI Elements ---
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const authContainer = document.getElementById('auth-container');
+        const userContainer = document.getElementById('user-container');
+        const userEmailEl = document.getElementById('user-email');
+        const adminPanelBtn = document.getElementById('admin-panel-btn');
+        
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const closeLoginBtn = document.getElementById('close-login-btn');
+        const closeSignupBtn = document.getElementById('close-signup-btn');
+
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        
+        const loginErrorEl = document.getElementById('login-error');
+        const signupErrorEl = document.getElementById('signup-error');
+
+
+        // --- Auth Modals ---
+        loginBtn.addEventListener('click', () => loginModal.classList.remove('hidden'));
+        signupBtn.addEventListener('click', () => signupModal.classList.remove('hidden'));
+        closeLoginBtn.addEventListener('click', () => loginModal.classList.add('hidden'));
+        closeSignupBtn.addEventListener('click', () => signupModal.classList.add('hidden'));
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                // Sign-out successful.
+            }).catch((error) => {
+                console.error("Logout Error:", error);
+            });
+        });
+
+        // --- Auth Logic ---
+        const ADMIN_EMAIL = "admin@exotic.com"; // The designated admin email
+
+        // Sign up
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            signupErrorEl.classList.add('hidden');
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    signupModal.classList.add('hidden');
+                    alert(`Account created for ${userCredential.user.email}!`);
+                    signupForm.reset();
+                })
+                .catch((error) => {
+                    signupErrorEl.textContent = error.message;
+                    signupErrorEl.classList.remove('hidden');
+                });
+        });
+
+        // Login
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+            loginErrorEl.classList.add('hidden');
+
+            const persistence = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+
+            setPersistence(auth, persistence)
+                .then(() => {
+                    return signInWithEmailAndPassword(auth, email, password);
+                })
+                .then((userCredential) => {
+                    loginModal.classList.add('hidden');
+                    loginForm.reset();
+                })
+                .catch((error) => {
+                    loginErrorEl.textContent = error.message;
+                    loginErrorEl.classList.remove('hidden');
+                });
+        });
+
+        // Auth state observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                authContainer.classList.add('hidden');
+                userContainer.classList.remove('hidden');
+                userContainer.classList.add('flex');
+                userEmailEl.textContent = user.email;
+
+                // Check for Admin
+                if (user.email === ADMIN_EMAIL) {
+                    adminPanelBtn.classList.remove('hidden');
+                } else {
+                    adminPanelBtn.classList.add('hidden');
+                }
+
+            } else {
+                // User is signed out
+                authContainer.classList.remove('hidden');
+                userContainer.classList.add('hidden');
+                userContainer.classList.remove('flex');
+                userEmailEl.textContent = '';
+                adminPanelBtn.classList.add('hidden');
+            }
+        });
+
+
+        // --- Money Animation Logic ---
+        function initMoneyAnimation() {
+            const canvas = document.getElementById('money-animation');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+
+            const imageUrls = [
+                'https://upload.wikimedia.org/wikipedia/commons/7/7b/Obverse_of_the_series_2009_%24100_Federal_Reserve_Note.jpg',
+                'https://c8.alamy.com/comp/2FBGC1G/close-up-front-view-of-a-50-dollar-united-states-treasury-bill-2FBGC1G.jpg',
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/US_%2420_Series_2006_Obverse.jpg/400px-US_%2420_Series_2006_Obverse.jpg'
+            ];
+
+            const moneyImages = [];
+            let imagesLoaded = 0;
+
+            imageUrls.forEach(src => {
+                const img = new Image();
+                img.src = src;
+                img.crossOrigin = "Anonymous"; // Handle potential CORS issues with images
+                img.onload = () => {
+                    imagesLoaded++;
+                };
+                moneyImages.push(img);
+            });
+
+            const notes = [];
+            const numNotes = 80;
+
+            class Note {
+                constructor() {
+                    this.reset();
+                    this.y = Math.random() * canvas.height;
+                }
+                
+                reset() {
+                    this.image = moneyImages[Math.floor(Math.random() * moneyImages.length)];
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * -canvas.height;
+                    this.speed = 1 + Math.random() * 2;
+                    this.rotation = Math.random() * Math.PI * 2;
+                    this.rotationSpeed = (Math.random() - 0.5) * 0.03;
+                    this.width = 80 + Math.random() * 60;
+                    this.height = this.width / 2.35; // Aspect ratio of a USD bill
+                    this.opacity = 0.5 + Math.random() * 0.5;
+                }
+
+                draw() {
+                    if (this.image && this.image.complete) {
+                        ctx.save();
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(this.rotation);
+                        ctx.globalAlpha = this.opacity;
+                        ctx.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
+                        ctx.restore();
+                    }
+                }
+
+                update() {
+                    this.y += this.speed;
+                    this.rotation += this.rotationSpeed;
+                    if (this.y > canvas.height + this.height) {
+                        this.reset();
+                    }
+                }
+            }
+
+            for (let i = 0; i < numNotes; i++) {
+                notes.push(new Note());
+            }
+
+            function animate() {
+                if (imagesLoaded !== imageUrls.length) {
+                     requestAnimationFrame(animate);
+                     return;
+                };
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                notes.forEach(note => {
+                    note.update();
+                    note.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        // --- Store Logic ---
+        const storefrontPage = document.getElementById('storefront-page');
+        const adminPage = document.getElementById('admin-page');
+        const productPage = document.getElementById('product-page');
+        const termsPage = document.getElementById('terms-page');
+        const backToStoreBtn = document.getElementById('back-to-store-btn');
+        const cartButton = document.getElementById('cart-button');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCartBtn = document.getElementById('close-cart-btn');
+        const passwordModal = document.getElementById('password-modal');
+        const closePasswordBtn = document.getElementById('close-password-btn');
+        const passwordInput = document.getElementById('password-input');
+        const passwordSubmitBtn = document.getElementById('password-submit-btn');
+        const passwordError = document.getElementById('password-error');
+        const cartCount = document.getElementById('cart-count');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartFooter = document.getElementById('cart-footer');
+        const variantSelect = document.getElementById('variant');
+        const quantityInput = document.getElementById('quantity');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        const priceTag = document.getElementById('price-tag');
+        const termsCheckbox = document.getElementById('terms-checkbox');
+        const termsLink = document.getElementById('terms-link');
+        const backFromTermsBtn = document.getElementById('back-from-terms-btn');
+        const productPageHeader = document.getElementById('product-page-header');
+        const productPageTitle = document.getElementById('product-page-title');
+        const productDescription = document.getElementById('product-description');
+        const warrantyTag = document.getElementById('warranty-tag');
+        const supportButton = document.getElementById('support-button');
+        const supportModal = document.getElementById('support-modal');
+        const closeSupportBtn = document.getElementById('close-support-btn');
+        const chatLog = document.getElementById('chat-log');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const orderIdModal = document.getElementById('order-id-modal');
+        const closeOrderIdBtn = document.getElementById('close-order-id-btn');
+        const orderIdInput = document.getElementById('order-id-input');
+        const orderIdSubmitBtn = document.getElementById('order-id-submit-btn');
+        const orderIdError = document.getElementById('order-id-error');
+        const backToStoreFromAdminBtn = document.getElementById('back-to-store-from-admin-btn');
+        const supportChatList = document.getElementById('support-chat-list');
+        
+        let cart = [];
+        let validOrderIDs = [];
+        let activeOrderId = null;
+        let currentProductKey = null;
+        let currentProductToUnlock = null;
+        let supportChatInitialized = false;
+        let isAdmin = false;
+        let cameFromCart = false;
+        let unsubscribeFromChat;
+
+        const products = {
+            'ihg': {
+                name: 'IHG Account',
+                variants: [
+                    { name: '100-120k Pts (~$225 GC)', price: 50.00 },
+                    { name: '200-300k Pts (~$550 GC)', price: 150.00 },
+                    { name: '300-400k Pts (~$625 GC)', price: 180.00 },
+                    { name: '400-500k Pts (~$800 GC)', price: 200.00 },
+                    { name: '500-600k Pts (~$825 GC)', price: 220.00 },
+                    { name: '600-800k Pts (~$1200 GC)', price: 250.00 },
+                    { name: '800k-1M Pts (~$1600 GC)', price: 300.00 },
+                    { name: '1-1.5M Pts (~$2000 GC)', price: 350.00 },
+                    { name: '1.5-2M Pts (~$3000+ GC)', price: 400.00 },
+                    { name: '2-3M Pts (~$5000+ GC)', price: 600.00 },
+                ]
+            },
+            'amex': {
+                name: 'AMEX [SHIPPED CCS]',
+                variants: [
+                    { name: 'Available Credit [$20,000]', price: 3000.00 },
+                    { name: 'Available Credit [$30,000]', price: 5000.00 },
+                    { name: 'Available Credit [$40,000]', price: 10000.00 },
+                ]
+            },
+            'spotify': {
+                name: 'Spotify Premium',
+                variants: [
+                    { name: '1 Month', price: 12.00 },
+                    { name: '3 Months', price: 30.00 },
+                    { name: '1 Year', price: 50.00 },
+                    { name: 'LIFETIME (HOT!)', price: 70.00 },
+                ]
+            },
+            'reselling': {
+                name: 'Reselling Products',
+                variants: [
+                    { name: 'SP5DER', price: 50.00 },
+                    { name: 'HELLSTAR', price: 50.00 },
+                    { name: 'DEMINI TEARS', price: 50.00 },
+                    { name: 'CHROME HEARTS', price: 400.00 },
+                    { name: 'AirPods Gen 2', price: 30.00 },
+                    { name: 'AirPods 4', price: 45.00 },
+                ]
+            },
+            'secretsauce': {
+                name: 'Secret Sauce Access',
+                variants: [
+                    { name: 'HOW TO BECOME RICH', price: 1.00 }
+                ]
+            },
+            'sspassword': {
+                name: 'SS PASSWORD',
+                variants: [
+                    { name: 'Password', price: 20000.00 }
+                ]
+            },
+            'exoticz': {
+                name: 'Exoticz Access',
+                variants: [
+                    { name: 'Muha Meds - 1', price: 20.00 },
+                    { name: 'Muha Meds - 3', price: 50.00 },
+                    { name: 'Muha Meds - 5', price: 80.00 },
+                    { name: 'Muha Meds - 10', price: 130.00 },
+                    { name: 'Muha Meds - 30', price: 400.00 },
+                    { name: 'Muha Meds - 50', price: 650.00 },
+                    { name: 'Muha Meds - 100', price: 900.00 },
+                    { name: 'Ace Premium - 1', price: 25.00 },
+                    { name: 'Ace Premium - 3', price: 60.00 },
+                    { name: 'Ace Premium - 5', price: 90.00 },
+                    { name: 'Ace Premium - 10', price: 145.00 },
+                    { name: 'Ace Premium - 30', price: 430.00 },
+                    { name: 'Ace Premium - 50', price: 700.00 },
+                    { name: 'Ace Premium - 100', price: 1000.00 },
+                    { name: 'FLOWER,SHROOMS,ETC - DM FOR INFO', price: 0.00 },
+                ]
+            }
+        };
+
+        const passwordProtectedProducts = {
+            'secretsauce': 'MoneyforLife',
+            'exoticz': 'JayExoticFlower'
+        };
+
+        // --- Page Navigation & Admin Panel ---
+        adminPanelBtn.addEventListener('click', () => {
+            storefrontPage.classList.add('hidden');
+            adminPage.classList.remove('hidden');
+            renderAdminPanel();
+        });
+
+        backToStoreFromAdminBtn.addEventListener('click', () => {
+            adminPage.classList.add('hidden');
+            storefrontPage.classList.remove('hidden');
+        });
+
+        async function renderAdminPanel() {
+            supportChatList.innerHTML = '<p class="text-gray-400">Loading chats...</p>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "supportChats"));
+                if (querySnapshot.empty) {
+                     supportChatList.innerHTML = '<p class="text-gray-400">No support chats have been started yet.</p>';
+                     return;
+                }
+                supportChatList.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const chatId = doc.id;
+                    const chatButton = document.createElement('button');
+                    chatButton.textContent = chatId;
+                    chatButton.className = 'block w-full text-left font-mono text-sm border-b border-gray-700 py-2 hover:bg-gray-800 px-2 rounded-md';
+                    chatButton.onclick = () => {
+                        isAdmin = true;
+                        openSupportChat(chatId);
+                    };
+                    supportChatList.appendChild(chatButton);
+                });
+            } catch (error) {
+                 supportChatList.innerHTML = '<p class="text-red-500">Error loading chats.</p>';
+                 console.error("Error fetching chats: ", error);
+            }
+        }
+
+        document.querySelectorAll('[data-product]').forEach(card => {
+            card.addEventListener('click', () => {
+                const productKey = card.dataset.product;
+                if (Object.keys(passwordProtectedProducts).includes(productKey)) {
+                    currentProductToUnlock = productKey;
+                    passwordModal.classList.remove('hidden');
+                    passwordInput.focus();
+                } else {
+                    showProductPage(productKey);
+                }
+            });
+        });
+
+        function showProductPage(productKey) {
+            currentProductKey = productKey;
+            const productData = products[productKey];
+
+            // Set Title & Header Color
+            productPageTitle.textContent = productKey.toUpperCase();
+            productPageHeader.className = 'rounded-lg py-2 mb-4 inline-block'; // Reset classes
+            if (productKey === 'ihg') productPageHeader.classList.add('bg-orange-600');
+            else if (productKey === 'amex') productPageHeader.classList.add('bg-blue-800');
+            else if (productKey === 'spotify') productPageHeader.classList.add('bg-green-500');
+            else if (productKey === 'reselling') productPageHeader.classList.add('bg-purple-600');
+            else if (productKey === 'secretsauce') productPageHeader.classList.add('bg-gray-800');
+            else if (productKey === 'sspassword') productPageHeader.classList.add('bg-red-900');
+            else if (productKey === 'exoticz') productPageHeader.classList.add('bg-green-800');
+
+            
+            // Set Description
+            if (productKey === 'ihg') {
+                productDescription.innerHTML = `
+                     <p><strong class="font-medium text-white">IHG Accounts with Points.</strong> Can be used for:</p>
+                     <ul class="list-disc list-inside pl-2 space-y-1">
+                        <li>Booking Rooms</li>
+                        <li>Ordering Giftcards (HITTING HARD)</li>
+                        <li>Ordering Games, Books & Movies</li>
+                    </ul>
+                     <p><strong class="font-medium text-white">Method:</strong> Login, change email, then transfer points or order items. Transferring is recommended.</p>`;
+            } else if (productKey === 'amex') {
+                 productDescription.innerHTML = `
+                    <p><strong class="font-medium text-white">AMEX Shipped Cards.</strong></p>
+                    <p>Available credit is the total credit line on the card. You will receive a physical card shipped to you.</p>`;
+            } else if (productKey === 'spotify') {
+                 productDescription.innerHTML = `
+                    <p><strong class="font-medium text-white">Spotify Premium Subscriptions.</strong></p>
+                    <p>Get access to ad-free music, offline listening, and more. Select your desired subscription length.</p>`;
+            } else if (productKey === 'reselling') {
+                 productDescription.innerHTML = `
+                    <p><strong class="font-medium text-white">Exclusive Reselling Items.</strong></p>
+                    <p>Get your hands on high-demand, sold-out clothing and electronics at the best prices.</p>`;
+            } else if (productKey === 'secretsauce') {
+                productDescription.innerHTML = `
+                    <p><strong class="font-medium text-white">Unlock the Ultimate Advantage.</strong></p>
+                    <p>This is where the real game is played. Gain access to exclusive mentorship, private methods, and tools that are not available to the public.</p>`;
+            } else if (productKey === 'sspassword') {
+                productDescription.innerHTML = `
+                    <p><strong class="font-medium text-white">The Ultimate Key.</strong></p>
+                    <p>This password will teach you all the steps you need to get money and everything to get money.</p>`;
+            } else if (productKey === 'exoticz') {
+                 productDescription.innerHTML = `
+                    <p><strong class="font-medium text-white">Welcome to the Inner Circle.</strong></p>
+                    <p>This is the EXOTICZ collection, featuring our most exclusive and potent products. Discretion is advised.</p>`;
+            }
+
+
+            // Show/Hide Disclaimer
+            const disclaimerEl = document.getElementById('product-disclaimer');
+            if (productKey === 'ihg') {
+                disclaimerEl.classList.remove('hidden');
+            } else {
+                disclaimerEl.classList.add('hidden');
+            }
+
+            populateVariants();
+            updatePrice();
+            termsCheckbox.checked = false;
+            addToCartBtn.disabled = true;
+
+            storefrontPage.classList.add('hidden');
+            adminPage.classList.add('hidden');
+            productPage.classList.remove('hidden');
+        }
+
+        backToStoreBtn.addEventListener('click', () => {
+            productPage.classList.add('hidden');
+            storefrontPage.classList.remove('hidden');
+            currentProductKey = null;
+        });
+
+        termsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            cameFromCart = false;
+            productPage.classList.add('hidden');
+            termsPage.classList.remove('hidden');
+        });
+
+        // Event listener is attached later for cart terms link
+
+        backFromTermsBtn.addEventListener('click', () => {
+            termsPage.classList.add('hidden');
+            if (cameFromCart) {
+                cartModal.classList.remove('hidden');
+            } else {
+                productPage.classList.remove('hidden');
+            }
+        });
+
+        // --- Product Page Logic ---
+        function updatePrice() {
+            if (!currentProductKey) return;
+            const productVariants = products[currentProductKey].variants;
+            const selectedVariant = productVariants[variantSelect.selectedIndex];
+            const quantity = parseInt(quantityInput.value) || 1;
+            const totalPrice = selectedVariant.price * quantity;
+            
+            if (selectedVariant.name.toLowerCase().includes('dm for info')) {
+                priceTag.textContent = 'DM FOR INFO';
+                addToCartBtn.querySelector('span').textContent = `Contact For Info`;
+                addToCartBtn.disabled = true;
+                termsCheckbox.disabled = true;
+                quantityInput.disabled = true;
+            } else {
+                priceTag.textContent = `$${selectedVariant.price.toFixed(2)} each`;
+                addToCartBtn.querySelector('span').textContent = `Add to Cart ($${totalPrice.toFixed(2)})`;
+                addToCartBtn.disabled = !termsCheckbox.checked;
+                termsCheckbox.disabled = false;
+                quantityInput.disabled = false;
+            }
+
+            // Dynamic Warranty Logic
+            if (currentProductKey === 'spotify') {
+                if (selectedVariant.name.toLowerCase().includes('lifetime')) {
+                    warrantyTag.textContent = 'Warranty never ends';
+                } else {
+                    warrantyTag.textContent = 'Warranty until subscription ends';
+                }
+            } else {
+                warrantyTag.textContent = '24h Warranty';
+            }
+        }
+
+        function populateVariants() {
+            if (!currentProductKey) return;
+            variantSelect.innerHTML = ''; // Clear previous options
+            const productVariants = products[currentProductKey].variants;
+            productVariants.forEach((variant) => {
+                const option = document.createElement('option');
+                option.value = variant.name;
+                option.textContent = variant.name;
+                variantSelect.appendChild(option);
+            });
+        }
+        
+        termsCheckbox.addEventListener('change', () => {
+            addToCartBtn.disabled = !termsCheckbox.checked;
+        });
+
+        addToCartBtn.addEventListener('click', () => {
+            if (!currentProductKey) return;
+            
+            const productData = products[currentProductKey];
+            const selectedVariant = productData.variants[variantSelect.selectedIndex];
+            const quantity = parseInt(quantityInput.value);
+            const cartItem = {
+                id: `${currentProductKey}-${selectedVariant.name}`,
+                name: productData.name,
+                variant: selectedVariant.name,
+                price: selectedVariant.price,
+                quantity: quantity
+            };
+            
+            const existingItem = cart.find(item => item.id === cartItem.id);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push(cartItem);
+            }
+            
+            updateCart();
+            alert(`${quantity} x ${cartItem.variant.split(' (')[0]} added to cart!`);
+        });
+
+        // --- Cart & Password Modal Logic ---
+        function updateCart() {
+            renderCartItems();
+            updateCartCount();
+
+            if (cart.length === 0) {
+                cartFooter.innerHTML = '';
+                activeOrderId = null;
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const hasIHG = cart.some(item => item.id.startsWith('ihg'));
+
+            if (activeOrderId) {
+                cartFooter.innerHTML = `
+                     <div class="text-center space-y-4">
+                        <div class="space-y-2 text-xs text-gray-400">
+                            <div>
+                                <p class="font-bold text-white">Accepted Payments:</p>
+                                <p>Cash App: $Da915Killa</p>
+                                <p>Apple Pay: (915)-449-9963</p>
+                                ${hasIHG ? `<p class="font-bold text-yellow-400">LTC & BTC also accepted for IHG products</p>` : ''}
+                            </div>
+                            <hr class="border-gray-600">
+                            <div>
+                                <p class="font-bold text-white">Your Order ID for Support:</p>
+                                <p class="text-yellow-400 font-mono text-lg">${activeOrderId}</p>
+                            </div>
+                             <div class="flex justify-between items-center font-bold text-lg text-white">
+                                <span>Total:</span>
+                                <span>$${total.toFixed(2)}</span>
+                            </div>
+                            <hr class="border-gray-600">
+                            <p class="font-bold text-green-400 text-sm">AFTER PURCHASE CONTACT SUPPORT TO VERIFY PAYMENT</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                cartFooter.innerHTML = `
+                    <div class="text-center text-xs text-gray-400 mb-4 space-y-1">
+                        <p class="font-bold text-white">Accepted Payments:</p>
+                        <p>Cash App: $Da915Killa</p>
+                        <p>Apple Pay: (915)-449-9963</p>
+                        ${hasIHG ? `<p class="font-bold text-yellow-400">LTC & BTC accepted for IHG products</p>` : ''}
+                    </div>
+                    <div class="flex justify-between items-center font-bold text-lg mb-4">
+                        <span>Total</span>
+                        <span id="cart-total">$${total.toFixed(2)}</span>
+                    </div>
+                    <div class="flex items-center justify-center space-x-2 mb-4">
+                        <input type="checkbox" id="cart-terms-checkbox" class="h-4 w-4 rounded bg-gray-700 border-gray-400 text-white focus:ring-white">
+                        <label for="cart-terms-checkbox" class="text-sm text-gray-300">
+                            I agree to the <a href="#" id="cart-terms-link" class="underline text-yellow-400 hover:text-yellow-300">Terms of Service</a>.
+                        </label>
+                    </div>
+                    <button id="checkout-btn" class="w-full accent-yellow-bg text-black font-bold py-3 rounded-lg accent-yellow-bg-hover disabled:opacity-50 disabled:cursor-not-allowed" disabled>Checkout</button>
+                `;
+                // Re-attach event listeners since we are rewriting the HTML
+                document.getElementById('cart-terms-checkbox').addEventListener('change', (e) => {
+                    document.getElementById('checkout-btn').disabled = !e.target.checked;
+                });
+                document.getElementById('checkout-btn').addEventListener('click', handleCheckout);
+                document.getElementById('cart-terms-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    cameFromCart = true;
+                    cartModal.classList.add('hidden');
+                    termsPage.classList.remove('hidden');
+                });
+            }
+        }
+
+        function renderCartItems() {
+            cartItemsContainer.innerHTML = '';
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-400">Your cart is empty.</p>';
+                return;
+            }
+            cart.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex justify-between items-center mb-4';
+                itemEl.innerHTML = `
+                    <div>
+                        <p class="font-bold">${item.name}</p>
+                        <p class="text-sm text-gray-400">${item.variant}</p>
+                        <p class="text-sm text-gray-400">Qty: ${item.quantity}</p>
+                    </div>
+                    <p class="font-bold accent-yellow-text">$${(item.price * item.quantity).toFixed(2)}</p>
+                `;
+                cartItemsContainer.appendChild(itemEl);
+            });
+        }
+        
+        function updateCartCount() {
+             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+             cartCount.textContent = totalItems;
+        }
+        
+        function handleCheckout() {
+            if (cart.length === 0 || activeOrderId) return;
+            // The checkbox is already validated by the button's disabled state
+            activeOrderId = `EXOTIC-${Date.now()}`;
+            validOrderIDs.push(activeOrderId);
+            updateCart();
+        }
+
+        cartButton.addEventListener('click', () => {
+             cartModal.classList.remove('hidden');
+             updateCart();
+        });
+        
+        closeCartBtn.addEventListener('click', () => {
+            if (activeOrderId) {
+                cart = [];
+                activeOrderId = null;
+            }
+            cartModal.classList.add('hidden');
+            updateCart();
+        });
+
+        closePasswordBtn.addEventListener('click', () => {
+            passwordModal.classList.add('hidden');
+            passwordInput.value = '';
+            passwordError.classList.add('hidden');
+            currentProductToUnlock = null;
+        });
+
+        passwordSubmitBtn.addEventListener('click', () => {
+            const correctPassword = passwordProtectedProducts[currentProductToUnlock];
+            if (passwordInput.value === correctPassword) {
+                passwordModal.classList.add('hidden');
+                passwordInput.value = '';
+                passwordError.classList.add('hidden');
+                showProductPage(currentProductToUnlock);
+                currentProductToUnlock = null;
+            } else {
+                passwordError.classList.remove('hidden');
+                passwordInput.classList.add('border-red-500');
+                setTimeout(() => {
+                    passwordInput.classList.remove('border-red-500');
+                }, 2000);
+            }
+        });
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') passwordSubmitBtn.click();
+        });
+
+        // --- Live Support & Order ID Logic ---
+        supportButton.addEventListener('click', () => {
+            orderIdModal.classList.remove('hidden');
+            orderIdInput.focus();
+        });
+
+        closeOrderIdBtn.addEventListener('click', () => {
+            orderIdModal.classList.add('hidden');
+            orderIdInput.value = '';
+            orderIdError.classList.add('hidden');
+        });
+
+        orderIdSubmitBtn.addEventListener('click', () => {
+            const enteredId = orderIdInput.value.trim();
+            // Admin password override
+            if (enteredId === "AdminJayExotic") {
+                isAdmin = true;
+                orderIdModal.classList.add('hidden');
+                orderIdInput.value = '';
+                orderIdError.classList.add('hidden');
+                
+                adminPanelBtn.click(); // Go straight to admin panel
+                return; 
+            }
+
+            if (validOrderIDs.includes(enteredId)) {
+                isAdmin = false;
+                orderIdModal.classList.add('hidden');
+                orderIdInput.value = '';
+                orderIdError.classList.add('hidden');
+                openSupportChat(enteredId);
+                
+            } else {
+                orderIdError.classList.remove('hidden');
+                orderIdInput.classList.add('border-red-500');
+                setTimeout(() => {
+                    orderIdInput.classList.remove('border-red-500');
+                    orderIdError.classList.add('hidden');
+                }, 2500);
+            }
+        });
+        orderIdInput.addEventListener('keypress', (e) => {
+             if (e.key === 'Enter') orderIdSubmitBtn.click();
+        });
+
+        let activeChatId = null;
+
+        function openSupportChat(chatId) {
+            activeChatId = chatId;
+            supportModal.classList.remove('hidden');
+            chatLog.innerHTML = ''; // Clear previous chat
+            
+            const messagesRef = collection(db, 'supportChats', chatId, 'messages');
+            const q = query(messagesRef, orderBy('timestamp'));
+
+            if(unsubscribeFromChat) unsubscribeFromChat(); // Unsubscribe from previous listener
+
+            unsubscribeFromChat = onSnapshot(q, (querySnapshot) => {
+                chatLog.innerHTML = ''; // Clear before re-rendering
+                if (querySnapshot.empty && !isAdmin) {
+                    addChatMessage('Admin', 'Welcome to EXOTIC_RICH Support! How can I help you today?');
+                }
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    addChatMessage(data.sender, data.text);
+                });
+            });
+        }
+
+
+        closeSupportBtn.addEventListener('click', () => {
+            supportModal.classList.add('hidden');
+            if(unsubscribeFromChat) unsubscribeFromChat(); // Clean up listener
+            activeChatId = null;
+        });
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageText = chatInput.value.trim();
+            if (messageText && activeChatId) {
+                const sender = isAdmin ? 'Admin' : 'User';
+                chatInput.value = '';
+
+                try {
+                    const messagesRef = collection(db, 'supportChats', activeChatId, 'messages');
+                    await addDoc(messagesRef, {
+                        text: messageText,
+                        sender: sender,
+                        timestamp: serverTimestamp()
+                    });
+                } catch (error) {
+                    console.error("Error sending message: ", error);
+                    addChatMessage('System', 'Error: Could not send message.');
+                }
+            }
+        });
+
+        function addChatMessage(sender, message) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = 'w-full flex';
+
+            const messageEl = document.createElement('div');
+            messageEl.textContent = message;
+            
+            const senderIsUser = (sender === 'User');
+            
+            if (senderIsUser) {
+                 messageWrapper.classList.add('justify-end');
+                 messageEl.className = 'bg-yellow-500/80 text-black rounded-lg p-3 max-w-xs break-words';
+            } else {
+                 messageWrapper.classList.add('justify-start');
+                 messageEl.className = 'bg-gray-700/80 text-white rounded-lg p-3 max-w-xs break-words';
+                 const senderTag = document.createElement('p');
+                 senderTag.className = 'text-xs font-bold mb-1';
+                 senderTag.textContent = sender;
+                 
+                 if (sender === 'Admin') senderTag.classList.add('text-red-400');
+                 if (sender === 'Mod') senderTag.classList.add('text-blue-400');
+                 if (sender === 'System') senderTag.classList.add('text-green-400');
+                 
+                 messageEl.prepend(senderTag);
+            }
+            
+            messageWrapper.appendChild(messageEl);
+            chatLog.appendChild(messageWrapper);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        // --- Live Sales Notification ---
+        function startLiveSales() {
+            const notification = document.getElementById('live-sale-notification');
+            const saleLocationEl = document.getElementById('sale-location');
+            const saleProductEl = document.getElementById('sale-product');
+            const saleTimeEl = document.getElementById('sale-time');
+
+            const saleProducts = ["IHG Account", "AMEX Card", "Spotify Premium", "SP5DER Hoodie", "Secret Sauce Access", "SS PASSWORD", "AirPods", "Chrome Hearts"];
+            const saleLocations = [
+                // US Cities
+                "New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX", "Phoenix, AZ", 
+                "Philadelphia, PA", "San Antonio, TX", "San Diego, CA", "Dallas, TX", "San Jose, CA",
+                "Austin, TX", "Jacksonville, FL", "Fort Worth, TX", "Columbus, OH", "Charlotte, NC",
+                "San Francisco, CA", "Indianapolis, IN", "Seattle, WA", "Denver, CO", "Washington, D.C.",
+                "Boston, MA", "El Paso, TX", "Nashville, TN", "Detroit, MI", "Oklahoma City, OK",
+                "Portland, OR", "Las Vegas, NV", "Memphis, TN", "Louisville, KY", "Baltimore, MD",
+                "Milwaukee, WI", "Albuquerque, NM", "Tucson, AZ", "Fresno, CA", "Sacramento, CA",
+                "Kansas City, MO", "Mesa, AZ", "Atlanta, GA", "Omaha, NE", "Colorado Springs, CO",
+                "Raleigh, NC", "Miami, FL", "Virginia Beach, VA", "Oakland, CA", "Minneapolis, MN",
+                "Tulsa, OK", "Arlington, TX", "New Orleans, LA", "Wichita, KS",
+                // International Cities
+                "London, UK", "Paris, France", "Tokyo, Japan", "Dubai, UAE", "Singapore", 
+                "Hong Kong", "Sydney, Australia", "Toronto, Canada", "Berlin, Germany", "Moscow, Russia",
+                "Rome, Italy", "Madrid, Spain", "Seoul, South Korea", "Mexico City, Mexico", "São Paulo, Brazil"
+            ];
+
+            function showRandomSale() {
+                const product = saleProducts[Math.floor(Math.random() * saleProducts.length)];
+                const location = saleLocations[Math.floor(Math.random() * saleLocations.length)];
+                const time = Math.floor(Math.random() * 55) + 5;
+
+                saleLocationEl.textContent = location;
+                saleProductEl.textContent = product;
+                saleTimeEl.textContent = `${time} seconds`;
+
+                notification.classList.add('show');
+
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }
+
+            function scheduleNextSale() {
+                const nextInterval = (Math.random() * 8000) + 5000; // 5 to 13 seconds
+                setTimeout(() => {
+                    showRandomSale();
+                    scheduleNextSale();
+                }, nextInterval);
+            }
+            
+            setTimeout(scheduleNextSale, 3000); // Initial delay
+        }
+        
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initMoneyAnimation();
+            startLiveSales();
+        });
+
+        variantSelect.addEventListener('change', updatePrice);
+        quantityInput.addEventListener('input', updatePrice);
+
+    </script>
+</body>
+</html>
